@@ -53,6 +53,8 @@ impl Hand {
         let mut counts_without_joker = self.counts;
         counts_without_joker[9] = 0;
 
+        *counts_without_joker.iter_mut().max().unwrap() += jokers;
+
         let counts: [usize; 5] = [
             counts_without_joker.iter().filter(|&&v| v == 1).count(),
             counts_without_joker.iter().filter(|&&v| v == 2).count(),
@@ -61,24 +63,7 @@ impl Hand {
             counts_without_joker.iter().filter(|&&v| v == 5).count(),
         ];
 
-        let hand_type = Hand::calculate_hand(counts);
-
-        match (jokers, hand_type) {
-            (0, _) => hand_type,
-            (5, _) => HandType::FiveOfAKind,
-            (4, _) => HandType::FiveOfAKind,
-            (3, HandType::OnePair) => HandType::FiveOfAKind,
-            (3, HandType::HighCard) => HandType::FourOfAKind,
-            (2, HandType::ThreeOfAKind) => HandType::FiveOfAKind,
-            (2, HandType::OnePair) => HandType::FourOfAKind,
-            (2, HandType::HighCard) => HandType::ThreeOfAKind,
-            (1, HandType::FourOfAKind) => HandType::FiveOfAKind,
-            (1, HandType::ThreeOfAKind) => HandType::FourOfAKind,
-            (1, HandType::TwoPair) => HandType::FullHouse,
-            (1, HandType::OnePair) => HandType::ThreeOfAKind,
-            (1, HandType::HighCard) => HandType::OnePair,
-            _ => panic!("Unexpected hand - jokers: {}; hand {:?}", jokers, hand_type),
-        }
+        Hand::calculate_hand(counts)
     }
 }
 
@@ -110,7 +95,7 @@ fn get_card_strength_wildcard(ch: char) -> usize {
 }
 
 impl Ord for Hand {
-    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+    fn cmp(&self, other: &Self) -> Ordering {
         self.get_type().cmp(&other.get_type()).then_with(|| {
             let self_hand: Vec<_> = self.hand.chars().collect();
             let other_hand: Vec<_> = other.hand.chars().collect();
@@ -130,7 +115,7 @@ impl Ord for Hand {
 }
 
 impl PartialOrd for Hand {
-    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(self.cmp(other))
     }
 }
@@ -222,11 +207,6 @@ KK677 28
 KTJJT 220
 QQQJA 483
 "#;
-
-    #[test]
-    fn parses_example() {
-        // todo
-    }
 
     #[test]
     fn example_p1() {

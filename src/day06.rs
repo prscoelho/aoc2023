@@ -78,11 +78,6 @@ Distance:  9  40  200
 "#;
 
     #[test]
-    fn parses_example() {
-        // todo
-    }
-
-    #[test]
     fn example_p1() {
         let result = Day06::part1(EXAMPLE);
         let expected = 288;

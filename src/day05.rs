@@ -234,11 +234,6 @@ humidity-to-location map:
 "#;
 
     #[test]
-    fn parses_example() {
-        // todo
-    }
-
-    #[test]
     fn example_p1() {
         let result = Day05::part1(EXAMPLE);
         let expected = 35;
